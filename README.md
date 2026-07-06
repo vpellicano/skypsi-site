@@ -26,7 +26,7 @@ That push is the entire deploy. There is no separate build or release step.
 
 ## Brand assets
 
-Colors, type, logos, and voice live in the separate **private `skypsi-brand`** repo. Pull the design tokens (`design/tokens.css`) and logos from there when building the real site so the site and the brand never drift.
+Colors, type, logos, and voice live in the private **`skypsi-website`** repo under `assets/brand/` (guidelines in `brand-guidelines.md`, machine-readable tokens in `tokens.css` / `tokens.json`). Pull tokens and logos from there when building the real site so the site and the brand never drift.
 
 ## Local preview
 
