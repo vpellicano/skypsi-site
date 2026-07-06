@@ -3,49 +3,136 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>&nbsp;</title>
-  <meta name="robots" content="noindex" />
+  <title>SkyPSI</title>
+  <meta name="robots" content="noindex, nofollow" />
   <meta name="description" content="" />
   <style>
-    :root { --ink: #ededed; --dim: #6a6a6a; }
+    :root {
+      --bg: #0A0A0A;
+      --ink: #FFFFFF;
+      --accent: #F3461C;
+      --muted: #2B3437;
+      --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; }
     body {
-      background:
-        radial-gradient(1200px 700px at 50% 28%, #161616 0%, #0b0b0b 55%, #070707 100%);
+      background: var(--bg);
       color: var(--ink);
-      font-family: ui-sans-serif, -apple-system, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       display: flex; align-items: center; justify-content: center;
-      min-height: 100svh; padding: 8vmin; text-align: center;
+      min-height: 100svh; padding: 8vmin;
       -webkit-font-smoothing: antialiased;
     }
-    main { max-width: 34rem; opacity: 0; transform: translateY(8px); animation: rise 1.6s ease forwards; }
-    .mark {
-      width: 34px; height: 34px; margin: 0 auto 2.4rem;
-      border: 1px solid #2a2a2a; border-radius: 50%;
-      display: grid; place-items: center;
+    main {
+      width: min(20rem, 80vw);
+      text-align: center;
+      opacity: 0; transform: translateY(8px);
+      animation: rise 1.2s ease forwards;
     }
-    .mark span {
-      width: 6px; height: 6px; border-radius: 50%; background: var(--ink);
-      animation: pulse 3.4s ease-in-out infinite;
+    .wordmark { width: 100%; height: auto; display: block; margin: 0 auto 3.2rem; user-select: none; -webkit-user-drag: none; }
+    form { margin: 0; }
+    .field {
+      position: relative;
+      border-bottom: 1px solid var(--muted);
+      transition: border-color 0.25s ease;
     }
-    h1 {
-      font-weight: 400; font-size: clamp(1.25rem, 4.5vw, 1.9rem);
-      letter-spacing: 0.01em; line-height: 1.35; margin: 0;
+    .field:focus-within { border-color: var(--accent); }
+    input[type="password"] {
+      width: 100%;
+      background: transparent; border: 0; outline: 0;
+      color: var(--ink); caret-color: var(--accent);
+      font-family: var(--mono); font-size: 1.05rem;
+      letter-spacing: 0.35em; text-align: center;
+      padding: 0.7rem 0.2rem;
     }
-    p { margin: 1.4rem 0 0; color: var(--dim); font-size: 0.95rem; letter-spacing: 0.16em; text-transform: uppercase; }
-    footer { position: fixed; bottom: 5vmin; left: 0; right: 0; color: #3a3a3a; font-size: 0.72rem; letter-spacing: 0.22em; }
+    input::placeholder { color: #3a3a3a; letter-spacing: 0.35em; }
+    .err { animation: shake 0.4s ease; }
+    .err .field { border-color: var(--accent); }
+    #unsupported { display: none; color: #6a6a6a; font-size: 0.8rem; margin-top: 2rem; }
     @keyframes rise { to { opacity: 1; transform: none; } }
-    @keyframes pulse { 0%, 100% { opacity: 0.25; transform: scale(0.85); } 50% { opacity: 1; transform: scale(1); } }
-    @media (prefers-reduced-motion: reduce) { main, .mark span { animation: none; opacity: 1; transform: none; } }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-7px); } 40% { transform: translateX(7px); }
+      60% { transform: translateX(-4px); } 80% { transform: translateX(4px); }
+    }
+    @media (prefers-reduced-motion: reduce) { main { animation: none; opacity: 1; transform: none; } .err { animation: none; } }
   </style>
 </head>
 <body>
-  <main>
-    <div class="mark" aria-hidden="true"><span></span></div>
-    <h1>Something is being built.</h1>
-    <p>More soon</p>
+  <main id="m">
+    <img class="wordmark" src="assets/skypsi-wordmark-white.png" alt="SkyPSI" />
+    <form id="f" autocomplete="off">
+      <div class="field">
+        <input id="pw" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;" aria-label="Access code" autofocus />
+      </div>
+    </form>
+    <p id="unsupported">This page needs a modern browser over HTTPS.</p>
   </main>
-  <footer>MMXXVI</footer>
+  <script>
+    (function () {
+      var SALT = "21iz8pKhKv01vPlyWivUjA==", IV = "/tP76l7U1J/KVrNB", CT = "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";
+      var ITER = 310000;
+      var LS_KEY = "skypsi_gate_k";
+
+      function b64d(s) {
+        var bin = atob(s), a = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+        return a;
+      }
+      function b64e(buf) {
+        var a = new Uint8Array(buf), s = "";
+        for (var i = 0; i < a.length; i++) s += String.fromCharCode(a[i]);
+        return btoa(s);
+      }
+      if (!(window.crypto && crypto.subtle)) {
+        document.getElementById("unsupported").style.display = "block";
+        return;
+      }
+      function reveal(html) {
+        document.open(); document.write(html); document.close();
+      }
+      function decryptWith(key) {
+        return crypto.subtle.decrypt({ name: "AES-GCM", iv: b64d(IV) }, key, b64d(CT))
+          .then(function (pt) { return new TextDecoder().decode(pt); });
+      }
+      function deriveKey(pw) {
+        return crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"])
+          .then(function (km) {
+            return crypto.subtle.deriveKey(
+              { name: "PBKDF2", salt: b64d(SALT), iterations: ITER, hash: "SHA-256" },
+              km, { name: "AES-GCM", length: 256 }, true, ["decrypt"]);
+          });
+      }
+      // Returning visitor: try the remembered key silently.
+      try {
+        var saved = localStorage.getItem(LS_KEY);
+        if (saved) {
+          crypto.subtle.importKey("raw", b64d(saved), { name: "AES-GCM" }, false, ["decrypt"])
+            .then(decryptWith).then(reveal)
+            .catch(function () { try { localStorage.removeItem(LS_KEY); } catch (e) {} });
+        }
+      } catch (e) {}
+
+      document.getElementById("f").addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        var input = document.getElementById("pw");
+        var pw = input.value;
+        if (!pw) return;
+        deriveKey(pw).then(function (key) {
+          return decryptWith(key).then(function (html) {
+            crypto.subtle.exportKey("raw", key).then(function (raw) {
+              try { localStorage.setItem(LS_KEY, b64e(raw)); } catch (e) {}
+              reveal(html);
+            });
+          });
+        }).catch(function () {
+          input.value = "";
+          var m = document.getElementById("m");
+          m.classList.remove("err"); void m.offsetWidth; m.classList.add("err");
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
